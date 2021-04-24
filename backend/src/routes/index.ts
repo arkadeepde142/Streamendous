@@ -1,0 +1,1 @@
+export {default as videoRouter} from './video';
