@@ -12,7 +12,7 @@ const main = async () => {
 
 
   app.use("/videos", videoRouter);
-  app.get("/", (req, res) => {
+  app.get("/", (_, res) => {
     res.status(200).send(`<!DOCTYPE html>
     <html lang="en">
       <head>
