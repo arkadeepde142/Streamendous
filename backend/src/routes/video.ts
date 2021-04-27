@@ -1,6 +1,7 @@
 import { Router } from "express";
 import fs from "fs";
 import {OutgoingHttpHeaders} from "http";
+import multer from "multer"; 
 
 const videoRouter: Router = Router();
 
@@ -27,5 +28,10 @@ videoRouter.get("/", (req, res) => {
   const videoStream = fs.createReadStream(videoPath, { start, end });
   videoStream.pipe(res);
 });
+const upload = multer({ dest: 'uploads/' })
+videoRouter.post("/", upload.single('video'), (req, res)=>{
+  console.table(req.file)
+  res.status(200).json({message : "video uploaded"})
+})
 
 export default videoRouter;
