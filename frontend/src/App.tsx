@@ -1,56 +1,44 @@
 import * as React from "react";
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  // Link,
-  VStack,
-  // Code,
-  Grid,
-  theme,
-} from "@chakra-ui/react";
-import { ColorModeSwitcher } from "./ColorModeSwitcher";
-// import { Logo } from "./Logo";
-import { AspectRatio } from "@chakra-ui/react";
+import { ChakraProvider, theme, Link, HStack, StackDivider, Text} from "@chakra-ui/react";
+import { BrowserRouter as Router, Route, Switch, Link as RouteLink } from "react-router-dom";
+import { HomeScreen } from "./routes";
+import { ProfileScreen } from "./routes";
+import { UploadScreen } from "./routes";
+import { PlayScreen } from "./routes";
+
+type NavLinkProps = { text: string, path : string };
+const NavLink = ({ text, path }: NavLinkProps) => (
+  <Link as={RouteLink} to={path}>
+    <Text fontSize="xl">{text}</Text>
+  </Link>
+);
+
+const NavBar = () => (
+  <HStack spacing={3} divider={<StackDivider />} as="nav">
+    <NavLink path="/" text="Home"/>
+    <NavLink path="/profile" text="Profile"/>
+    <NavLink path="/upload" text="Upload"/>
+  </HStack>
+);
 
 export const App = () => (
   <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <AspectRatio maxW="560px" ratio={4/3}>
-        <video id="videoPlayer" width="650" controls muted autoPlay>
-           <source src="http://localhost:5000/videos" type="video/mp4" />
-       </video>
-          </AspectRatio>
-        <VStack spacing={8}>
-          {/* <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link> */}
-
-          {/* <AspectRatio maxW="560px" ratio={1}>
-            <iframe
-              title="naruto"
-              src="https://www.youtube.com/embed/QhBnZ6NPOY0"
-              allowFullScreen
-            />
-          </AspectRatio> */}
-          
-          <Text>
-            hau mau khau
-          </Text>
-        </VStack>
-      </Grid>
-    </Box>
+    <Router>
+    <NavBar/>
+      <Switch>
+        <Route path="/profile">
+          <ProfileScreen/>
+        </Route>
+        <Route path="/play">
+          <PlayScreen />
+        </Route>
+        <Route path="/upload">
+          <UploadScreen />
+        </Route>
+        <Route path="/">
+          <HomeScreen/>
+        </Route>
+      </Switch>
+    </Router>
   </ChakraProvider>
 );

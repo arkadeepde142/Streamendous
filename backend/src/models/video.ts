@@ -4,13 +4,15 @@ import { IUser } from "./user";
 export interface IVideo extends mongoose.Document {
     title : string,
     description : string,
-    owner : IUser['_id']
+    owner : IUser['_id'],
+    file_id : mongoose.Schema.Types.ObjectId
 }
 const VideoSchema: mongoose.Schema = new mongoose.Schema(
   {
       title : { type: String, required: true},
       description : {type : String, required : false},
-      owner : {type : mongoose.Schema.Types.ObjectId, required : true}
+      owner : {type : mongoose.Schema.Types.ObjectId, required : true},
+      file_id : {type : mongoose.Schema.Types.ObjectId, required : true }
   },
   {
     timestamps: true,

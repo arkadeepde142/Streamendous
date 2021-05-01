@@ -1,7 +1,10 @@
 import { Router } from "express";
 import fs from "fs";
-import {OutgoingHttpHeaders} from "http";
-import multer from "multer"; 
+import { OutgoingHttpHeaders } from "http";
+import mongoose from "mongoose";
+import multer from "multer";
+import { Video } from "../models";
+import { Readable } from "stream";
 
 const videoRouter: Router = Router();
 
@@ -28,10 +31,53 @@ videoRouter.get("/", (req, res) => {
   const videoStream = fs.createReadStream(videoPath, { start, end });
   videoStream.pipe(res);
 });
-const upload = multer({ dest: 'uploads/' })
-videoRouter.post("/", upload.single('video'), (req, res)=>{
-  console.table(req.file)
-  res.status(200).json({message : "video uploaded"})
-})
+
+const upload = multer({ dest: "uploads/" });
+videoRouter.post("/", upload.single("video"), async (req, res) => {
+  console.table(req.file);
+
+  const trackName = req.body.name;
+
+  // Covert buffer to Readable Stream
+  const readableTrackStream = new Readable();
+  readableTrackStream.push(req.file.buffer);
+  readableTrackStream.push(null);
+
+  const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: "tracks",
+  });
+
+  const uploadStream = bucket.openUploadStream(trackName);
+  const id = uploadStream.id;
+  readableTrackStream.pipe(uploadStream);
+  const video = await Video.create({
+    title: req.file.filename,
+    description: "demo..",
+    owner: new mongoose.mongo.ObjectId(),
+    file_id: id,
+  });
+  console.table(video);
+  uploadStream.on("error", () => {
+    return res.status(500).json({ message: "Error uploading file" });
+  });
+
+  uploadStream.on("finish", () => {
+    return res
+      .status(201)
+      .json({
+        message:
+          "File uploaded successfully, stored under Mongo ObjectID: " + id,
+      });
+  });
+//   const resultHandler = function (err) {
+//     if (err) {
+//         console.log("unlink failed", err);
+//     } else {
+//         console.log("file deleted");
+//     }
+// }
+
+//   fs.unlink(req.file.path, resultHandler);
+});
 
 export default videoRouter;
