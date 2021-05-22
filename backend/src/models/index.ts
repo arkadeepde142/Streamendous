@@ -1,2 +1,2 @@
-export { default as User } from "./user";
-export { default as Video } from "./video";
+export { default as User, IUser } from "./user";
+export { default as Video, IVideo } from "./video";

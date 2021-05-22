@@ -6,15 +6,17 @@ import {
   VStack,
   // Code,
   Grid,
-  theme,
 } from "@chakra-ui/react";
-import { ColorModeSwitcher } from "../ColorModeSwitcher";
+import { Redirect } from "react-router";
+import {UserContext, User} from "../contexts"
 
-export const ProfileScreen = () => (
-
+export const ProfileScreen = () => {
+  const [user, setUser] = React.useContext(UserContext)
+  return !user?
+  <Redirect to={"/login"}/>
+  :(
       <Box textAlign="center" fontSize="xl">
         <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
           <VStack spacing={8}>      
             <Text>
               hau mau khau
@@ -23,4 +25,4 @@ export const ProfileScreen = () => (
         </Grid>
       </Box>
 
-  );
+  )};

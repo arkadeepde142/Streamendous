@@ -4,18 +4,24 @@ import { OutgoingHttpHeaders } from "http";
 import mongoose from "mongoose";
 import multer from "multer";
 import { Video } from "../models";
-import { Readable } from "stream";
 
 const videoRouter: Router = Router();
 
-videoRouter.get("/", (req, res) => {
+videoRouter.get("/:id", async (req, res) => {
+  const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: "tracks",
+  });
   const range = req.headers.range;
 
-  const videoPath =
-    "/Users/arkadeepde/Movies/The Lion King (1994) (1)/The.Lion.King.1994.BluRay.720p.x264.YIFY.mp4";
-  const videoSize = fs.statSync(videoPath).size;
-
-  const CHUNK_SIZE = 1024 * 250;
+  const video_doc = await Video.findById(req.params.id)
+  if(!video_doc){
+    return res.status(400).json({message: "no video present against this id"})
+  }
+  const video_id = new mongoose.mongo.ObjectId(video_doc.file_id.toString())
+  // console.table(stream)
+  // console.log(bucket.find({_id:"60a212efee697e9b52a4866f"}))
+  const videoSize = video_doc.size
+  const CHUNK_SIZE = 1024 * 512;
   const start = Number(range?.replace(/\D/g, ""));
   const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
 
@@ -27,57 +33,58 @@ videoRouter.get("/", (req, res) => {
     "content-length": `${contentLength}`,
     "content-type": "video/mp4",
   };
+  
   res.writeHead(206, headers);
-  const videoStream = fs.createReadStream(videoPath, { start, end });
-  videoStream.pipe(res);
+  const stream = bucket.openDownloadStream(video_id, {start, end})
+  stream.pipe(res);
+  
 });
 
 const upload = multer({ dest: "uploads/" });
+
+
 videoRouter.post("/", upload.single("video"), async (req, res) => {
   console.table(req.file);
 
-  const trackName = req.body.name;
-
-  // Covert buffer to Readable Stream
-  const readableTrackStream = new Readable();
-  readableTrackStream.push(req.file.buffer);
-  readableTrackStream.push(null);
+  const trackName = req.file.filename;
+  const readableTrackStream = fs.createReadStream(req.file.path)
 
   const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
     bucketName: "tracks",
   });
 
   const uploadStream = bucket.openUploadStream(trackName);
+  console.log(trackName);
   const id = uploadStream.id;
   readableTrackStream.pipe(uploadStream);
-  const video = await Video.create({
+  const uploadable = await Video.create({
     title: req.file.filename,
     description: "demo..",
     owner: new mongoose.mongo.ObjectId(),
     file_id: id,
+    size : req.file.size
   });
-  console.table(video);
+  // console.table(video);
   uploadStream.on("error", () => {
     return res.status(500).json({ message: "Error uploading file" });
   });
-
-  uploadStream.on("finish", () => {
-    return res
-      .status(201)
-      .json({
-        message:
-          "File uploaded successfully, stored under Mongo ObjectID: " + id,
-      });
+  readableTrackStream.on("end", () => {
+    console.log("readable track ends.....");
   });
-//   const resultHandler = function (err) {
-//     if (err) {
-//         console.log("unlink failed", err);
-//     } else {
-//         console.log("file deleted");
-//     }
-// }
+  uploadStream.on("finish", () => {
+    return res.status(200).json({
+      message: "File uploaded successfully, stored under Mongo ObjectID: " + uploadable._id,
+    });
+  });
+  //   const resultHandler = function (err) {
+  //     if (err) {
+  //         console.log("unlink failed", err);
+  //     } else {
+  //         console.log("file deleted");
+  //     }
+  // }
 
-//   fs.unlink(req.file.path, resultHandler);
+  //   fs.unlink(req.file.path, resultHandler);
 });
 
 export default videoRouter;
