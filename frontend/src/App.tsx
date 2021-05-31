@@ -1,20 +1,35 @@
 import * as React from "react";
 import {
   ChakraProvider,
-  theme,
-  Link,
   HStack,
   Text,
   Spacer,
   Button,
   Flex,
+  Input,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  extendTheme,
+  useStyleConfig,
+  useColorMode,
+  Container
 } from "@chakra-ui/react";
+import { Avatar } from "@chakra-ui/react";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Link as RouteLink,
 } from "react-router-dom";
+import {
+  Search2Icon,
+  BellIcon,
+  PlusSquareIcon,
+  ViewIcon,
+} from "@chakra-ui/icons";
 import { HomeScreen } from "./routes";
 import { ProfileScreen } from "./routes";
 import { UploadScreen } from "./routes";
@@ -24,6 +39,7 @@ import { Signup, Login } from "./routes";
 import { User, UserContext } from "./contexts";
 import userContext from "./contexts/UserContext";
 import axios from "axios";
+import theme from "./theme"
 export interface LoginResult {
   accessToken: {
     token: string;
@@ -37,48 +53,95 @@ export interface LoginResult {
     username: string;
   };
 }
-type NavLinkProps = { text: string; path: string };
-const NavLink = ({ text, path }: NavLinkProps) => (
-  <Link as={RouteLink} to={path}>
-    <Text fontSize="xl">{text}</Text>
-  </Link>
+type NavLinkProps = { text?: string; path: string; icon?: React.ReactNode };
+const NavLink = ({ text, path, icon }: NavLinkProps) => (
+  <Button
+    as={RouteLink}
+    to={path}
+    rounded="50%"
+    variant="ghost"
+    _focus={{ outline: "0px" }}
+  >
+    {text && <Text fontSize="xl">{text}</Text>}
+    {icon}
+  </Button>
 );
 
 const NavBar = ({
   user,
   setUser,
+  size,
+  variant
 }: {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
-}) => (
-  <Flex w={"100vw"}>
-  <HStack spacing={[5,10]} margin={[2,5]} as="nav" w={"100vw"}>
-    <NavLink path="/" text="Home" />
-    <NavLink path="/profile" text="Profile" />
-    <NavLink path="/upload" text="Upload" />
-    <Spacer />
-    {user && (
-      <Button
-        colorScheme="yellow"
-        onClick={async () => {
-          await axios.post(
-            "http://localhost:5000/auth/logout",
-            {},
-            {
-              headers: { Authorization: `Bearer ${user?.token}` },
-              withCredentials: true,
+  size? : string;
+  variant? : string;
+}) => {
+  const { colorMode, toggleColorMode } = useColorMode()
+  const styles = useStyleConfig("NavBar", {size, variant})
+  return(
+  <Container maxW="100vw" sx={styles}>
+    <HStack spacing={[5, 10]} as="nav">
+      <Flex borderRadius={10} w="30vw">
+        <Input placeholder="Search" backgroundColor="#d3d3d3" _focus={{outline: "0px"}} _placeholder={{color : "brand.900"}} color={"brand.900"}/>
+        <Button ml={3} _focus={{ outline: "0px" }}>
+          {<Search2Icon w="5" h="5" />}
+        </Button>
+      </Flex>
+      <Text fontFamily="fantasy" fontSize={"30"} fontWeight="bold" pt={3} color="brand.800">
+        Streamendous
+      </Text>
+      <Spacer />
+      <HStack>
+        <NavLink path="/" icon={<ViewIcon w="5" h="5" />} />
+        <NavLink path="/upload" icon={<PlusSquareIcon w="5" h="5" />} />
+        {user && (
+          <Menu>
+            {({ isOpen }) => (
+              <>
+                <MenuButton
+                  isActive={isOpen}
+                  as={IconButton}
+                  rounded="50%"
+                  variant="ghost"
+                  _focus={{ outline: "0px" }}
+                  icon={<BellIcon w="5" h="5" />}
+                />
+                <MenuList>
+                  <MenuItem onClick={() => alert("Kagebunshin")}>
+                    Create a Copy
+                  </MenuItem>
+                </MenuList>
+              </>
+            )}
+          </Menu>
+        )}
+        {/* <NavLink
+            path="/profile"
+            icon={ user? <Avatar name={`${user?.firstName} ${user?.lastName}`} /> : <Button >Login</Button>}
+          /> */}
+        <Button
+          as={RouteLink}
+          to="/profile"
+          {...(user
+            ? { variant:"avatar",
+            _focus: { outline: "0px"},
             }
-          );
-          setUser(null)
-        }}
-      >
-        Logout
-      </Button>
-    )}
-    <ColorModeSwitcher justifySelf="flex-end" />
-  </HStack>
-  </Flex>
-);
+            : null)}
+        >
+          {user ? (
+            <Avatar name={`${user?.firstName} ${user?.lastName}`} color="brand.500" background={colorMode === "light" ? "brand.900":"brand.300"} />
+          ) : (
+            <Text>Login</Text>
+          )}
+        </Button>
+      </HStack>
+      <ColorModeSwitcher/>
+    </HStack>
+  </Container>
+);}
+
 
 export const App = () => {
   const [user, setUser] = React.useState<User | null>(null);
@@ -100,7 +163,7 @@ export const App = () => {
         };
         setUser(_user);
       } catch (error) {
-        console.log(error);
+        console.log(error.response);
       }
     })();
   }, []);
@@ -109,7 +172,7 @@ export const App = () => {
       <Router>
         <userContext.Provider value={[user, setUser]}>
           <userContext.Consumer>
-          {([user, setUser])=>(<NavBar user={user} setUser={setUser} />)}
+            {([user, setUser]) => <NavBar user={user} setUser={setUser} />}
           </userContext.Consumer>
           <Switch>
             <Route path="/signup">

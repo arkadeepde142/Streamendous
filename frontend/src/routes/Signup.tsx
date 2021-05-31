@@ -64,7 +64,7 @@ export const Signup = () => {
   return user?
   <Redirect to={"/"}/>
   :(
-    <Box textAlign="center" fontSize="xl">
+    <Box textAlign="center" fontSize="xl" pl={40} pr={40} pt={15}>
       <Grid minH="100vh" p={3} margin={"auto"}>
         <Formik
           initialValues={{
@@ -223,9 +223,12 @@ export const Signup = () => {
               </Field>
               <Button
                 mt={4}
-                colorScheme="teal"
+                color="brand.800"
                 isLoading={props.isSubmitting}
                 type="submit"
+                variant="outline"
+                outline="2px"
+                outlineColor="brand.800"
               >
                 Sign up
               </Button>
