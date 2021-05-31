@@ -3,6 +3,7 @@ import {mode} from "@chakra-ui/theme-tools"
 const theme = extendTheme({
     colors: {
       brand: {
+        50 : "#b3b3b3",
         100: "#ffffff",
         200: "#f3f3f3",
         300: "#CBD5E0",
@@ -12,7 +13,8 @@ const theme = extendTheme({
         700: "#F6AD55",
         800: "#FE6F04",
         900: "#1a202c",
-        1000: "#03464C"
+        1000: "#212F3C",
+        2000 : "#000000"
       },
     },
     styles:{
@@ -55,7 +57,7 @@ const theme = extendTheme({
       },
       NavBar: {
           baseStyle:(props) => ({
-            bg : mode("brand.300", "brand.900")(props),
+            bg : mode("brand.300", "brand.2000")(props),
             color : mode("brand.900", "brand.300")(props),
         }),
         

@@ -33,7 +33,7 @@ export const UploadScreen = () => {
       minH="100vh"
       minW={"100vw"}
       p={30}
-      alignItems="center"
+      alignItems="flex-start"
       justifyContent="center"
       flexDirection="column"
     >
@@ -83,7 +83,9 @@ export const UploadScreen = () => {
             }}
           />
         </FormControl>
-        <Button type="submit" w="full" mt = {[5,10]}>
+        <Button type="submit" w="full" mt = {[5,10]}  color="brand.800"
+                  variant="outline"
+                  outline="2px">
           Upload
         </Button>
       </form>
