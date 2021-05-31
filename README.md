@@ -20,7 +20,6 @@
     <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-   Feature</a>
   </p>
 </p>
 
@@ -48,7 +47,7 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
+   
   </ol>
 </details>
 
@@ -59,7 +58,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Streamendous is a very specific platform aimed towards good quality video expirience alongside efficient data usage and simplistic user interface. Objective behind this project was to develop a platform for small and medium sized videos that could be again modified into more specific sectors, for example for entertainment or educational purposes.
+Streamendous is a very specific platform aimed towards good quality video experience alongside efficient data usage and simplistic user interface. Objective behind this project was to develop a platform for small and medium sized videos that could be again modified into more specific sectors, for example for entertainment or educational purposes.
 
 Here's why:
 * Streamline the content variety and diversify within that sector
