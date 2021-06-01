@@ -56,7 +56,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+![Product Name Screen Shot][product-screenshot]
 
 Streamendous is a very specific platform aimed towards good quality video experience alongside efficient data usage and simplistic user interface. Objective behind this project was to develop a platform for small and medium sized videos that could be again modified into more specific sectors, for example for entertainment or educational purposes.
 
@@ -100,13 +100,18 @@ none
    yarn add
    ```
 
-
+A .env file is to be added to the backend directory of this repository. The .env file must contain the following 3 fields
+URI=<mongoDB uri>
+ACCESS_KEY=<access_key>
+REFRESH_KEY=<refresh_key>
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-
-
+![Product Name Screen Shot][signup]
+![Product Name Screen Shot][login]
+![Product Name Screen Shot][home]
+![Product Name Screen Shot][upload]
 
 
 <!-- ROADMAP -->
@@ -177,4 +182,8 @@ Arkadeep De (arkadeepde142) - [@linkedIn](https://www.linkedin.com/in/arkadeep-d
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: images/feed.png
+[home]: images/home.png
+[login]: images/login.png
+[signup]: images/signup.png
+[upload]: images/upload.png
